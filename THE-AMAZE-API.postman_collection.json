@@ -1,0 +1,789 @@
+{
+    "info": {
+        "name": "THE AMAZE - Backend API Collection",
+        "_postman_id": "the-amaze-api-collection",
+        "description": "Complete API collection for THE AMAZE luxury fashion e-commerce backend.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "BASE_URL",
+            "value": "http://localhost:5000",
+            "type": "string"
+        },
+        {
+            "key": "TOKEN",
+            "value": "PASTE_YOUR_JWT_TOKEN_HERE",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🔐 AUTH",
+            "item": [
+                {
+                    "name": "Register User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/auth/register",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@theamaze.fashion\",\n  \"password\": \"admin123\",\n  \"isAdmin\": true\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Login User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/auth/login",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@theamaze.fashion\",\n  \"password\": \"admin123\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🛍️ PRODUCTS",
+            "item": [
+                {
+                    "name": "Get All Products",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/products",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Single Product",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/products/PRODUCT_ID_HERE",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "PRODUCT_ID_HERE"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Product (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/products",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Luxury Silk Dress\",\n  \"category\": \"Dresses\",\n  \"description\": \"A stunning luxury silk dress for elite occasions.\",\n  \"price\": 25000,\n  \"salePrice\": 20000,\n  \"stock\": 50,\n  \"featured\": true,\n  \"mainImage\": \"https://via.placeholder.com/500\",\n  \"hoverImage\": \"https://via.placeholder.com/500\",\n  \"variants\": [\n    { \"colorName\": \"Black\", \"image\": \"https://via.placeholder.com/500\" },\n    { \"colorName\": \"Gold\", \"image\": \"https://via.placeholder.com/500\" }\n  ],\n  \"gallery\": [\n    \"https://via.placeholder.com/500\",\n    \"https://via.placeholder.com/500\"\n  ]\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Update Product (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/products/PRODUCT_ID_HERE",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "PRODUCT_ID_HERE"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"price\": 22000,\n  \"stock\": 45,\n  \"featured\": false\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Product (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/products/PRODUCT_ID_HERE",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "PRODUCT_ID_HERE"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📦 ORDERS",
+            "item": [
+                {
+                    "name": "Get All Orders (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/orders",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Orders",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/orders/myorders",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders",
+                                "myorders"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Order",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/orders",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"orderItems\": [\n    {\n      \"name\": \"Luxury Silk Dress\",\n      \"qty\": 1,\n      \"image\": \"https://via.placeholder.com/500\",\n      \"price\": 25000,\n      \"selectedColor\": \"Black\",\n      \"product\": \"PRODUCT_ID_HERE\"\n    }\n  ],\n  \"shippingAddress\": {\n    \"fullName\": \"Ali Raza\",\n    \"address\": \"123 Street, Lahore\",\n    \"city\": \"Lahore\",\n    \"postalCode\": \"54000\",\n    \"country\": \"Pakistan\",\n    \"phone\": \"03001234567\"\n  },\n  \"paymentMethod\": \"Cash on Delivery\",\n  \"totalPrice\": 25000\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Update Order Status (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/orders/ORDER_ID_HERE/status",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "orders",
+                                "ORDER_ID_HERE",
+                                "status"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"Confirmed\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "⚡ FLASH SALE",
+            "item": [
+                {
+                    "name": "Get Flash Sale",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/flash-sale",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "flash-sale"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Flash Sale (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/flash-sale",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "flash-sale"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"active\": true,\n  \"discountPercentage\": 30,\n  \"endTime\": \"2026-12-31T23:59:59.000Z\",\n  \"bannerText\": \"Mega Flash Sale - 30% OFF Everything!\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Toggle Flash Sale (Admin)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/flash-sale/SALE_ID_HERE/toggle",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "flash-sale",
+                                "SALE_ID_HERE",
+                                "toggle"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"active\": false\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📊 DASHBOARD",
+            "item": [
+                {
+                    "name": "Get Dashboard Stats (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/dashboard",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "dashboard"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🦸 HERO",
+            "item": [
+                {
+                    "name": "Get Hero Content",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/hero",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "hero"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create/Update Hero (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/hero",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "hero"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Redefine Luxury\",\n  \"subtitle\": \"Discover the pinnacle of fashion\",\n  \"image\": \"https://via.placeholder.com/1920x1080\",\n  \"buttonText\": \"Shop Now\",\n  \"buttonLink\": \"/products\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🏆 TRUST STATS",
+            "item": [
+                {
+                    "name": "Get Trust Stats",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/trust",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "trust"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Trust Stat (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/trust",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "trust"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"icon\": \"star\",\n  \"value\": \"10,000+\",\n  \"label\": \"Happy Customers\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📩 CONTACT",
+            "item": [
+                {
+                    "name": "Send Contact Message",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/contact",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "contact"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Ali Raza\",\n  \"email\": \"ali@example.com\",\n  \"message\": \"I love your collection! Please restock the black silk dress.\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Messages (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/contact",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "contact"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "⭐ REVIEWS",
+            "item": [
+                {
+                    "name": "Get All Reviews",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/reviews",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "reviews"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Review",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/reviews",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "reviews"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"productId\": \"PRODUCT_ID_HERE\",\n  \"rating\": 5,\n  \"comment\": \"Absolutely stunning quality. Worth every penny!\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "💳 PAYMENT SETTINGS",
+            "item": [
+                {
+                    "name": "Get Payment Methods",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/payment",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Payment Methods (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/payment",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payment"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"methods\": [\"Cash on Delivery\", \"EasyPaisa\", \"JazzCash\", \"Bank Transfer\"]\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🎟️ PROMO CODES",
+            "item": [
+                {
+                    "name": "Validate Promo Code",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/promo/validate",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "promo",
+                                "validate"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"code\": \"AMAZE20\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Create Promo Code (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/promo",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "promo"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"code\": \"AMAZE20\",\n  \"discountType\": \"percentage\",\n  \"discountValue\": 20,\n  \"minOrderAmount\": 5000,\n  \"expiresAt\": \"2026-12-31T23:59:59.000Z\",\n  \"usageLimit\": 100\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Promo Codes (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/promo",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "promo"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Promo Code (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{TOKEN}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{BASE_URL}}/api/promo/PROMO_ID_HERE",
+                            "host": [
+                                "{{BASE_URL}}"
+                            ],
+                            "path": [
+                                "api",
+                                "promo",
+                                "PROMO_ID_HERE"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
