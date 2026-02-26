@@ -71,14 +71,16 @@ const createFlashSale = asyncHandler(async (req, res) => {
 // @route   PATCH /api/flash-sale/toggle
 // @access  Private/Admin
 const toggleFlashSaleStatus = asyncHandler(async (req, res) => {
-    const sale = await FlashSale.findOne({});
+    let sale = await FlashSale.findOne({});
     if (sale) {
         sale.active = !sale.active;
         await sale.save();
         res.json(sale);
     } else {
-        res.status(404);
-        throw new Error('Flash sale not found');
+        // Create one with default values if it doesn't exist
+        sale = new FlashSale({ active: true });
+        await sale.save();
+        res.json(sale);
     }
 });
 

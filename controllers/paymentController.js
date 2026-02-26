@@ -1,72 +1,40 @@
 const asyncHandler = require('express-async-handler');
 const PaymentSettings = require('../models/PaymentSettings');
 
-// @desc    Get all active payment methods
+// @desc    Get payment settings
 // @route   GET /api/payment
 // @access  Public
-const getPaymentMethods = asyncHandler(async (req, res) => {
-    const methods = await PaymentSettings.find({ active: true });
-    res.json(methods);
+const getPaymentSettings = asyncHandler(async (req, res) => {
+    let settings = await PaymentSettings.findOne({});
+    if (!settings) {
+        settings = await PaymentSettings.create({
+            easyPaisa: '03451234567',
+            jazzCash: '03007654321',
+            shippingFee: 250,
+            enableCOD: true
+        });
+    }
+    res.json(settings);
 });
 
-// @desc    Update payment method details (Admin only)
+// @desc    Update payment settings (Admin only)
 // @route   PUT /api/payment
 // @access  Private/Admin
-const updatePaymentMethod = asyncHandler(async (req, res) => {
-    const { method, details, active } = req.body;
-    let payment = await PaymentSettings.findOne({ method });
+const updatePaymentSettings = asyncHandler(async (req, res) => {
+    const { easyPaisa, jazzCash, shippingFee, enableCOD } = req.body;
+    let settings = await PaymentSettings.findOne({});
 
-    if (payment) {
-        payment.details = details || payment.details;
-        payment.active = active !== undefined ? active : payment.active;
-    } else {
-        payment = new PaymentSettings({ method, details, active });
+    if (!settings) {
+        settings = new PaymentSettings({});
     }
 
-    const updatedPayment = await payment.save();
-    res.json(updatedPayment);
+    settings.easyPaisa = easyPaisa !== undefined ? easyPaisa : settings.easyPaisa;
+    settings.jazzCash = jazzCash !== undefined ? jazzCash : settings.jazzCash;
+    settings.shippingFee = shippingFee !== undefined ? shippingFee : settings.shippingFee;
+    settings.enableCOD = enableCOD !== undefined ? enableCOD : settings.enableCOD;
+
+    const updatedSettings = await settings.save();
+    res.json(updatedSettings);
 });
 
-// @desc    Create payment method (Admin only)
-// @route   POST /api/payment
-// @access  Private/Admin
-const createPaymentMethod = asyncHandler(async (req, res) => {
-    const { method, details, active } = req.body;
-
-    const exists = await PaymentSettings.findOne({ method });
-    if (exists) {
-        res.status(400);
-        throw new Error('Payment method already exists. Use PUT to update.');
-    }
-
-    const payment = await PaymentSettings.create({
-        method,
-        details: details || '',
-        active: active !== undefined ? active : true
-    });
-
-    res.status(201).json(payment);
-});
-
-// @desc    Toggle COD specifically
-// @route   PATCH /api/payment/cod-toggle
-// @access  Private/Admin
-const toggleCOD = asyncHandler(async (req, res) => {
-    const payment = await PaymentSettings.findOne({ method: 'Cash on Delivery' });
-    if (payment) {
-        payment.active = !payment.active;
-        await payment.save();
-        res.json(payment);
-    } else {
-        // If not found, create it disabled? or error?
-        // Let's create it
-        const newPayment = await PaymentSettings.create({
-            method: 'Cash on Delivery',
-            details: 'Pay upon delivery',
-            active: true // default enabled
-        });
-        res.json(newPayment);
-    }
-});
-
-module.exports = { getPaymentMethods, updatePaymentMethod, createPaymentMethod, toggleCOD };
+module.exports = { getPaymentSettings, updatePaymentSettings };

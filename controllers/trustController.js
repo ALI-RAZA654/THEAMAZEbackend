@@ -7,10 +7,12 @@ const getTrustStats = asyncHandler(async (req, res) => {
 });
 
 const updateTrustStat = asyncHandler(async (req, res) => {
-    const { id, value } = req.body;
+    const { id, value, label, icon } = req.body;
     const stat = await TrustStat.findById(id);
     if (stat) {
-        stat.value = value;
+        stat.value = value !== undefined ? value : stat.value;
+        stat.label = label !== undefined ? label : stat.label;
+        stat.icon = icon !== undefined ? icon : stat.icon;
         await stat.save();
         res.json(stat);
     } else {

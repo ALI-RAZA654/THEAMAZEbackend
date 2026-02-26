@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { getHeroes, createHero, toggleSpotlight } = require('../controllers/heroController');
+const { getHero, updateHero, toggleHero } = require('../controllers/heroController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
-    .get(getHeroes)
-    .post(protect, admin, createHero);
+    .get(getHero)
+    .put(protect, admin, updateHero);
 
-router.patch('/toggle-spotlight', protect, admin, toggleSpotlight);
+router.patch('/toggle', protect, admin, toggleHero);
 
 module.exports = router;

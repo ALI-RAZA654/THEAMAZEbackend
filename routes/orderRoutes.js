@@ -13,7 +13,7 @@ const {
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
-    .post(protect, addOrderItems)
+    .post(addOrderItems)
     .get(protect, admin, getOrders);
 
 // User specific routes

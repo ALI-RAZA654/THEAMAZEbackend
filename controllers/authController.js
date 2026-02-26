@@ -8,7 +8,18 @@ const generateToken = require('../utils/generateToken');
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
+
+    // 🆕 FALLBACK: If user not in DB, check against .env credentials
+    if (!user && email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+        console.log('🏁 Admin user not found. Creating from .env credentials...');
+        user = await User.create({
+            name: 'System Admin',
+            email: process.env.ADMIN_EMAIL,
+            password: process.env.ADMIN_PASSWORD,
+            isAdmin: true
+        });
+    }
 
     if (user && (await user.matchPassword(password))) {
         res.json({

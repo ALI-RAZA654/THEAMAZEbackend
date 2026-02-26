@@ -10,7 +10,8 @@ const {
     toggleFeatured,
     toggleProductFlashSale,
     getProductsByCategory,
-    getFeaturedProducts
+    getFeaturedProducts,
+    bulkUpdateFlashSale
 } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -20,6 +21,7 @@ router.route('/')
 
 router.get('/featured', getFeaturedProducts);
 router.get('/category/:category', getProductsByCategory);
+router.put('/flash-sale/bulk', protect, admin, bulkUpdateFlashSale);
 
 router.route('/:id')
     .get(getProductById)

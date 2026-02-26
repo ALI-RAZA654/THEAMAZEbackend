@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const {
     getPromos, validatePromo, createPromo, deletePromo,
-    updateMarquee, toggleMarquee
+    updateMarquee, toggleMarquee, getPublicPromo
 } = require('../controllers/promoController');
+
+router.get('/public', getPublicPromo);
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')

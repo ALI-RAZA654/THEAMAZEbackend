@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const sendEmail = require('../config/mailer');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -13,6 +14,10 @@ const addOrderItems = asyncHandler(async (req, res) => {
         customerInfo,
         totalAmount,
     } = req.body;
+
+    if (customerInfo && !customerInfo.name && customerInfo.firstName) {
+        customerInfo.name = `${customerInfo.firstName} ${customerInfo.lastName || ''}`.trim();
+    }
 
     if (orderItems && orderItems.length === 0) {
         res.status(400);
@@ -31,6 +36,43 @@ const addOrderItems = asyncHandler(async (req, res) => {
         });
 
         const createdOrder = await order.save();
+
+        // Send order confirmation email
+        const customerEmail = (req.user && req.user.email) ? req.user.email : (customerInfo && customerInfo.email ? customerInfo.email : null);
+        const customerName = (req.user && req.user.name) ? req.user.name : (customerInfo && customerInfo.firstName ? customerInfo.firstName : 'Valued Customer');
+
+        if (customerEmail) {
+            try {
+                await sendEmail({
+                    email: customerEmail,
+                    subject: `THE AMAZE - Order Confirmation ${orderId}`,
+                    message: `Dear ${customerName},\n\nThank you for choosing THE AMAZE. Your order has been placed successfully.\n\nOrder ID: ${orderId}\nTotal Amount: RS.${totalAmount}\n\nWe will notify you once your protocol is shipped.\n\nThe Amaze Team`
+                });
+            } catch (err) {
+                console.error('Order confirmation email failed:', err);
+            }
+        }
+
+        // Notify admin about the new order
+        try {
+            const itemsList = orderItems.map(item => `- ${item.name} x${item.qty} (RS.${item.price * item.qty})`).join('\n');
+            await sendEmail({
+                email: process.env.ADMIN_EMAIL || 'admin@theamaze.fashion',
+                subject: `NEW ORDER RECEIVED - ${orderId}`,
+                message: `A new order has been placed on THE AMAZE.\n\n` +
+                    `Order ID: ${orderId}\n` +
+                    `Customer: ${customerInfo?.name || customerName}\n` +
+                    `Email: ${customerInfo?.email || customerEmail || 'N/A'}\n` +
+                    `Phone: ${customerInfo?.phone || 'N/A'}\n` +
+                    `\nDelivery Address:\n${shippingAddress?.address}, ${shippingAddress?.city}${shippingAddress?.postalCode ? ', ' + shippingAddress.postalCode : ''}, ${shippingAddress?.country}\n` +
+                    `\nItems Ordered:\n${itemsList}\n` +
+                    `\nPayment Method: ${paymentMethod}\n` +
+                    `Total Amount: RS.${totalAmount}\n` +
+                    `\nTime: ${new Date().toLocaleString()}`
+            });
+        } catch (err) {
+            console.error('Admin order notification email failed:', err);
+        }
 
         // Stock reduction
         for (const item of orderItems) {

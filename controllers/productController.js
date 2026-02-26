@@ -28,20 +28,14 @@ const getProductById = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
-    const {
-        name, price, description, mainImage, hoverImage, category, stock, featured
-    } = req.body;
+    // Ensure required fields for Mongoose
+    if (!req.body.description) {
+        req.body.description = 'The Amaze Cinematic Technical Asset. Engineered for elite aesthetic performance.';
+    }
 
     const product = new Product({
-        name,
-        price,
-        user: req.user._id,
-        mainImage,
-        hoverImage,
-        category,
-        stock,
-        description,
-        featured
+        ...req.body,
+        // user: req.user._id // Schema doesn't have user, removing to avoid potential strict errors
     });
 
     const createdProduct = await product.save();
@@ -53,7 +47,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
     const {
-        name, price, description, mainImage, hoverImage, category, stock, featured, isFlashSale, salePrice, variants, gallery
+        name, price, description, mainImage, hoverImage, category, stock, featured, isFlashSale, salePrice, variants, gallery, badge, sizeChart, sizes
     } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -65,12 +59,15 @@ const updateProduct = asyncHandler(async (req, res) => {
         product.mainImage = mainImage || product.mainImage;
         product.hoverImage = hoverImage || product.hoverImage;
         product.category = category || product.category;
-        product.stock = stock || product.stock;
+        product.stock = stock !== undefined ? stock : product.stock;
         product.featured = featured !== undefined ? featured : product.featured;
         product.isFlashSale = isFlashSale !== undefined ? isFlashSale : product.isFlashSale;
-        product.salePrice = salePrice || product.salePrice;
+        product.salePrice = salePrice !== undefined ? salePrice : product.salePrice;
         product.variants = variants || product.variants;
         product.gallery = gallery || product.gallery;
+        product.badge = badge !== undefined ? badge : product.badge;
+        product.sizeChart = sizeChart || product.sizeChart;
+        product.sizes = sizes || product.sizes;
 
         const updatedProduct = await product.save();
         res.json(updatedProduct);
@@ -174,6 +171,23 @@ const getFeaturedProducts = asyncHandler(async (req, res) => {
     res.json(products);
 });
 
+// @desc    Bulk Update Flash Sale Status
+// @route   PUT /api/products/flash-sale/bulk
+// @access  Private/Admin
+const bulkUpdateFlashSale = asyncHandler(async (req, res) => {
+    const { productIds } = req.body; // Array of IDs that SHOULD be in flash sale
+
+    // Set all products to isFlashSale: false
+    await Product.updateMany({}, { isFlashSale: false });
+
+    // Set selected products to isFlashSale: true
+    if (productIds && productIds.length > 0) {
+        await Product.updateMany({ _id: { $in: productIds } }, { isFlashSale: true });
+    }
+
+    res.json({ message: 'Flash sale selection synchronized' });
+});
+
 module.exports = {
     getProducts,
     getProductById,
@@ -184,5 +198,6 @@ module.exports = {
     toggleFeatured,
     toggleProductFlashSale,
     getProductsByCategory,
-    getFeaturedProducts
+    getFeaturedProducts,
+    bulkUpdateFlashSale
 };

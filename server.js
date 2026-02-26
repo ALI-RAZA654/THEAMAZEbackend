@@ -21,7 +21,9 @@ const app = express();
 app.use(express.json());
 
 // Security Headers
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
 
 // Compression
 app.use(compression());
@@ -31,8 +33,8 @@ app.use(cors());
 
 // Rate Limiting
 const limiter = rateLimit({
-    windowMs: 15 * 64 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 200 // Increased limit to be safe
 });
 app.use('/api/', limiter);
 
@@ -49,9 +51,14 @@ app.use('/api/flash-sale', require('./routes/flashSaleRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/hero', require('./routes/heroRoutes'));
 app.use('/api/promo', require('./routes/promoRoutes'));
+app.use('/api/category', require('./routes/categoryRoutes'));
+app.use('/api/lookbook', require('./routes/lookbookRoutes'));
+app.use('/api/footer', require('./routes/footerRoutes'));
+app.use('/api/muse', require('./routes/museRoutes'));
 app.use('/api/trust', require('./routes/trustRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
+app.use('/api/about', require('./routes/aboutRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 

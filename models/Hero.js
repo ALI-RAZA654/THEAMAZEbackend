@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
 
 const heroSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    subtitle: { type: String, required: true },
-    image: { type: String, required: true }, // Cloudinary URL
+    heading: { type: String, required: true },
+    subtext: { type: String, required: true },
+    videoLink: { type: String },
     ctaText: { type: String, default: 'Shop Now' },
-    ctaLink: { type: String, default: '/archive' },
+    featuredProductId: { type: String },
+    spotlightProductIds: [{ type: String }],
+    enableSpotlight: { type: Boolean, default: true },
     active: { type: Boolean, default: true }
 }, {
     timestamps: true
 });
 
-const Hero = mongoose.model('Hero', heroSchema);
-module.exports = Hero;
+module.exports = mongoose.model('Hero', heroSchema);

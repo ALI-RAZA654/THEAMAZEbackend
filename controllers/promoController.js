@@ -92,4 +92,18 @@ const deletePromo = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { getPromos, validatePromo, createPromo, deletePromo, updateMarquee, toggleMarquee };
+// @desc    Get public promo info (Marquee)
+// @route   GET /api/promo/public
+// @access  Public
+const getPublicPromo = asyncHandler(async (req, res) => {
+    const marquee = await Marquee.findOne({});
+    const activePromo = await Promo.findOne({ active: true }).sort({ createdAt: -1 });
+
+    res.json({
+        text: marquee ? marquee.text : 'Welcome to THE AMAZE!',
+        code: activePromo ? activePromo.code : '',
+        isEnabled: marquee ? marquee.active : true
+    });
+});
+
+module.exports = { getPromos, validatePromo, createPromo, deletePromo, updateMarquee, toggleMarquee, getPublicPromo };

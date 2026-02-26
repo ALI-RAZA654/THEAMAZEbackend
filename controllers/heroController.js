@@ -1,25 +1,50 @@
 const asyncHandler = require('express-async-handler');
 const Hero = require('../models/Hero');
 
-const getHeroes = asyncHandler(async (req, res) => {
-    const heroes = await Hero.find({ active: true });
-    res.json(heroes);
+// @desc    Get current hero configuration
+// @route   GET /api/hero
+// @access  Public
+const getHero = asyncHandler(async (req, res) => {
+    let hero = await Hero.findOne({});
+    if (!hero) {
+        hero = await Hero.create({
+            heading: "DIGITAL SCULPTURES.",
+            subtext: "Redefining the relationship between advanced textiles and human form.",
+            videoLink: "",
+            ctaText: "Purchase the future",
+            enableSpotlight: true
+        });
+    }
+    res.json(hero);
 });
 
-const createHero = asyncHandler(async (req, res) => {
-    const hero = new Hero(req.body);
-    const created = await hero.save();
-    res.status(201).json(created);
-});
-
-// @desc    Toggle hero spotlight
-// @route   PATCH /api/hero/toggle-spotlight
+// @desc    Update hero configuration (Admin only)
+// @route   PUT /api/hero
 // @access  Private/Admin
-const toggleSpotlight = asyncHandler(async (req, res) => {
-    // This assumes there's only one active hero or we toggle the first found
-    // If multiple heroes exist and we want to toggle a specific one, we need :id
-    // But API list says /api/hero/toggle-spotlight without ID
-    // So let's assume it finds the single main hero or first one
+const updateHero = asyncHandler(async (req, res) => {
+    const { heading, subtext, videoLink, ctaText, featuredProductId, spotlightProductIds, enableSpotlight } = req.body;
+    let hero = await Hero.findOne({});
+
+    if (!hero) {
+        hero = new Hero({});
+    }
+
+    hero.heading = heading || hero.heading;
+    hero.subtext = subtext || hero.subtext;
+    hero.videoLink = videoLink !== undefined ? videoLink : hero.videoLink;
+    hero.ctaText = ctaText || hero.ctaText;
+    hero.featuredProductId = featuredProductId !== undefined ? featuredProductId : hero.featuredProductId;
+    hero.spotlightProductIds = spotlightProductIds !== undefined ? spotlightProductIds : hero.spotlightProductIds;
+    hero.enableSpotlight = enableSpotlight !== undefined ? enableSpotlight : hero.enableSpotlight;
+
+    const updatedHero = await hero.save();
+    res.json(updatedHero);
+});
+
+// @desc    Toggle hero active status
+// @route   PATCH /api/hero/toggle
+// @access  Private/Admin
+const toggleHero = asyncHandler(async (req, res) => {
     const hero = await Hero.findOne({});
     if (hero) {
         hero.active = !hero.active;
@@ -27,8 +52,8 @@ const toggleSpotlight = asyncHandler(async (req, res) => {
         res.json(hero);
     } else {
         res.status(404);
-        throw new Error('Hero section not set up');
+        throw new Error('Hero not found');
     }
 });
 
-module.exports = { getHeroes, createHero, toggleSpotlight };
+module.exports = { getHero, updateHero, toggleHero };

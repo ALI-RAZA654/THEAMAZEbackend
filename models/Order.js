@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema({
     shippingAddress: {
         address: { type: String, required: true },
         city: { type: String, required: true },
-        postalCode: { type: String, required: true },
+        postalCode: { type: String, default: '' }, // Optional
         country: { type: String, required: true }
     },
     orderItems: [
@@ -26,7 +26,7 @@ const orderSchema = new mongoose.Schema({
             selectedColor: { type: String },
             product: {
                 type: mongoose.Schema.Types.ObjectId,
-                required: true,
+                required: false,
                 ref: 'Product'
             }
         }

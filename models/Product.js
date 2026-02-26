@@ -14,9 +14,12 @@ const productSchema = new mongoose.Schema({
     stock: { type: Number, required: true, default: 0 },
     rating: { type: Number, default: 5 },
     featured: { type: Boolean, default: false },
+    badge: { type: String },
     isFlashSale: { type: Boolean, default: false },
     mainImage: { type: String, required: true }, // Cloudinary URL
     hoverImage: { type: String },
+    sizeChart: { type: String }, // NEW: Size Chart Image URL
+    sizes: [String], // NEW: Available sizes (e.g., ["M", "L", "XL"])
     variants: [variantSchema],
     gallery: [String], // Array of Cloudinary URLs
 }, {

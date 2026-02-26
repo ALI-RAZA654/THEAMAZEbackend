@@ -5,7 +5,8 @@ const {
     submitContact,
     deleteContact,
     getSubjects,
-    createSubject
+    createSubject,
+    bulkUpdateSubjects
 } = require('../controllers/contactController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -15,6 +16,7 @@ router.get('/subjects', getSubjects);
 
 // Admin routes - Subjects
 router.post('/subjects', protect, admin, createSubject);
+router.post('/subjects/bulk', protect, admin, bulkUpdateSubjects);
 
 // Admin routes - Messages
 router.get('/', protect, admin, getContacts); // GET /api/contact (Admin only - returns all messages)
