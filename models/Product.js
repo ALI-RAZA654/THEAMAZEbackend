@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const variantSchema = new mongoose.Schema({
     colorName: { type: String, required: true },
+    colorHex: { type: String, default: '#000000' },
     image: { type: String, required: true } // Cloudinary URL
 });
 
@@ -18,7 +19,8 @@ const productSchema = new mongoose.Schema({
     isFlashSale: { type: Boolean, default: false },
     mainImage: { type: String, required: true }, // Cloudinary URL
     hoverImage: { type: String },
-    sizeChart: { type: String }, // NEW: Size Chart Image URL
+    sizeChart: { type: mongoose.Schema.Types.Mixed }, // Image URL or Table Array
+    fabric: { type: String, default: 'Hybrid Synthetic' },
     sizes: [String], // NEW: Available sizes (e.g., ["M", "L", "XL"])
     variants: [variantSchema],
     gallery: [String], // Array of Cloudinary URLs

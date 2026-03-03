@@ -47,7 +47,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
     const {
-        name, price, description, mainImage, hoverImage, category, stock, featured, isFlashSale, salePrice, variants, gallery, badge, sizeChart, sizes
+        name, price, description, mainImage, hoverImage, category, stock, featured, isFlashSale, salePrice, variants, gallery, badge, sizeChart, sizes, fabric
     } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -68,6 +68,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         product.badge = badge !== undefined ? badge : product.badge;
         product.sizeChart = sizeChart || product.sizeChart;
         product.sizes = sizes || product.sizes;
+        product.fabric = fabric || product.fabric;
 
         const updatedProduct = await product.save();
         res.json(updatedProduct);
