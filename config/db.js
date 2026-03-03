@@ -5,11 +5,17 @@ const mongoose = require('mongoose');
  * Removed deprecated options and focused on bypassing network blocks.
  */
 const connectDB = async () => {
+    // DEBUG: Print all available env variable KEYS (not values for security)
+    console.log('🔍 DEBUG - Available ENV Keys:', Object.keys(process.env).join(', '));
+    console.log('🔍 DEBUG - MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    console.log('🔍 DEBUG - MONGODB_URI length:', process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0);
+
     const uri = process.env.MONGODB_URI;
 
     if (!uri) {
         console.error('--------------------------------------------------');
         console.error('❌ CRITICAL ERROR: MONGODB_URI is missing in your .env file.');
+        console.error('Available ENV Keys:', Object.keys(process.env).join(', '));
         console.error('--------------------------------------------------');
         process.exit(1);
     }
