@@ -55,7 +55,12 @@ const addOrderItems = asyncHandler(async (req, res) => {
 
         // Notify admin about the new order
         try {
-            const itemsList = orderItems.map(item => `- ${item.name} x${item.qty} (RS.${item.price * item.qty})`).join('\n');
+            const itemsList = orderItems.map(item => {
+                let s = `- ${item.name} x${item.qty} (RS.${item.price * item.qty})`;
+                if (item.size) s += ` | Size: ${item.size}`;
+                if (item.color) s += ` | Color: ${item.color}`;
+                return s;
+            }).join('\n');
             await sendEmail({
                 email: process.env.ADMIN_EMAIL || 'admin@theamaze.fashion',
                 subject: `NEW ORDER RECEIVED - ${orderId}`,

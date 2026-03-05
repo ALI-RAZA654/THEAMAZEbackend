@@ -25,7 +25,15 @@ const getCategories = asyncHandler(async (req, res) => {
 const updateCategories = asyncHandler(async (req, res) => {
     const updatedCategoriesData = req.body; // Array of { uid, name, image, isActive }
 
+    // 1. Get UIDs of categories that should remain
+    const remainingUids = updatedCategoriesData.map(c => c.uid).filter(uid => uid);
+
+    // 2. Delete categories NOT in the remaining list
+    await Category.deleteMany({ uid: { $nin: remainingUids } });
+
+    // 3. Upsert remaining categories
     for (const data of updatedCategoriesData) {
+        if (!data.uid) continue;
         await Category.findOneAndUpdate(
             { uid: data.uid },
             {
