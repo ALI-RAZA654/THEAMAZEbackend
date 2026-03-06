@@ -10,7 +10,7 @@ const getPromos = asyncHandler(async (req, res) => {
     // Get Marquee (create default if not exists)
     let marquee = await Marquee.findOne({});
     if (!marquee) {
-        marquee = await Marquee.create({ text: 'Welcome to THE AMAZE!', active: true });
+        marquee = await Marquee.create({ texts: ['Welcome to THE AMAZE!'], active: true });
     }
 
     res.json({
@@ -23,17 +23,20 @@ const getPromos = asyncHandler(async (req, res) => {
 // @route   PUT /api/promo
 // @access  Private/Admin
 const updateMarquee = asyncHandler(async (req, res) => {
-    const { text, link, active } = req.body;
+    const { text, texts, link, active } = req.body;
     let marquee = await Marquee.findOne({});
 
     if (marquee) {
-        marquee.text = text || marquee.text;
+        if (texts) marquee.texts = texts;
+        else if (text) marquee.texts = [text];
+
         marquee.link = link !== undefined ? link : marquee.link;
         marquee.active = active !== undefined ? active : marquee.active;
         await marquee.save();
         res.json(marquee);
     } else {
-        marquee = await Marquee.create({ text, link, active });
+        const marqueeTexts = texts || (text ? [text] : ['Welcome to THE AMAZE!']);
+        marquee = await Marquee.create({ texts: marqueeTexts, link, active });
         res.status(201).json(marquee);
     }
 });
@@ -99,8 +102,18 @@ const getPublicPromo = asyncHandler(async (req, res) => {
     const marquee = await Marquee.findOne({});
     const activePromo = await Promo.findOne({ active: true }).sort({ createdAt: -1 });
 
+    let texts = ['Welcome to THE AMAZE!'];
+    if (marquee) {
+        if (marquee.texts && marquee.texts.length > 0) {
+            texts = marquee.texts;
+        } else if (marquee.text) {
+            texts = [marquee.text];
+        }
+    }
+
     res.json({
-        text: marquee ? marquee.text : 'Welcome to THE AMAZE!',
+        texts,
+        text: texts[0], // Keep single text for backward compatibility
         code: activePromo ? activePromo.code : '',
         isEnabled: marquee ? marquee.active : true
     });
