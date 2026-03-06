@@ -59,6 +59,7 @@ app.use('/api/trust', require('./routes/trustRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/about', require('./routes/aboutRoutes'));
+app.use('/api/subscribers', require('./routes/subscriberRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 

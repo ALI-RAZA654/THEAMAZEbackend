@@ -302,6 +302,27 @@
 
 ---
 
+## 📧 ELITE PROTOCOL (SUBSCRIBERS) APIs (New)
+
+### 35. Sync Subscribers Manifest
+- **Method:** `GET`
+- **URL:** `/api/subscribers`
+- **Auth Required:** ✅ Admin Token
+- **Response:** Array of Subscriber entities
+
+### 36. Initialize Subscriber Identity
+- **Method:** `POST`
+- **URL:** `/api/subscribers`
+- **Body:** `{ "email": "user@example.com", "source": "Website" }` (Source optional)
+- **Auth Required:** ❌ Public
+
+### 37. Erase Subscriber Identity
+- **Method:** `DELETE`
+- **URL:** `/api/subscribers/:id`
+- **Auth Required:** ✅ Admin Token
+
+---
+
 ## ⚠️ IMPORTANT NOTES
 
 - **Token** login ke baad milta hai. Usse `Authorization: Bearer TOKEN` header mein dalo.
