@@ -4,13 +4,14 @@ const { storage } = require('../config/cloudinary');
 const router = express.Router();
 
 const upload = multer({
-    storage: storage
+    storage: storage,
+    limits: { fileSize: 100 * 1024 * 1024 } // 100MB for video support
 });
 
 router.post('/', upload.single('image'), (req, res) => {
     // req.file contains the Cloudinary file details
     if (!req.file) {
-        return res.status(400).send('No image provided');
+        return res.status(400).send('No file provided');
     }
 
     res.send({

@@ -9,10 +9,14 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'the-amaze/products',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-        transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
+    params: async (req, file) => {
+        const isVideo = file.mimetype.startsWith('video/');
+        return {
+            folder: isVideo ? 'the-amaze/videos' : 'the-amaze/products',
+            resource_type: isVideo ? 'video' : 'image',
+            allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'webm'],
+            ...(isVideo ? {} : { transformation: [{ width: 1000, height: 1000, crop: 'limit' }] })
+        };
     },
 });
 
