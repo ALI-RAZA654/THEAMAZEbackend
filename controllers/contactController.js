@@ -12,17 +12,17 @@ const submitContact = asyncHandler(async (req, res) => {
     const contact = new Contact(req.body);
     const created = await contact.save();
 
-    try {
-        await sendEmail({
-            email: process.env.ADMIN_EMAIL || 'admin@theamaze.fashion',
-            subject: `New Message from ${contact.name}: ${req.body.subject || 'Contact Form'}`,
-            message: `You have received a new contact message via THE AMAZE.\n\nName: ${contact.name}\nEmail: ${contact.email}\nSubject: ${req.body.subject}\nMessage: ${contact.message}\n\nSent at: ${new Date().toLocaleString()}`
-        });
-    } catch (err) {
-        console.error('Contact notification email failed:', err);
-    }
-
+    // Send response immediately to avoid blocking
     res.status(201).json(created);
+
+    // Background transition: email notification
+    sendEmail({
+        email: process.env.ADMIN_EMAIL || 'admin@theamaze.fashion',
+        subject: `New Message from ${contact.name}: ${req.body.subject || 'Contact Form'}`,
+        message: `You have received a new contact message via THE AMAZE.\n\nName: ${contact.name}\nEmail: ${contact.email}\nSubject: ${req.body.subject}\nMessage: ${contact.message}\n\nSent at: ${new Date().toLocaleString()}`
+    }).catch(err => {
+        console.error('Background contact notification email failed:', err);
+    });
 });
 
 const deleteContact = asyncHandler(async (req, res) => {
