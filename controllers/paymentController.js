@@ -21,7 +21,7 @@ const getPaymentSettings = asyncHandler(async (req, res) => {
 // @route   PUT /api/payment
 // @access  Private/Admin
 const updatePaymentSettings = asyncHandler(async (req, res) => {
-    const { easyPaisa, jazzCash, shippingFee, enableCOD } = req.body;
+    const { easyPaisa, easyPaisaTitle, jazzCash, jazzCashTitle, shippingFee, enableCOD } = req.body;
     let settings = await PaymentSettings.findOne({});
 
     if (!settings) {
@@ -29,7 +29,9 @@ const updatePaymentSettings = asyncHandler(async (req, res) => {
     }
 
     settings.easyPaisa = easyPaisa !== undefined ? easyPaisa : settings.easyPaisa;
+    settings.easyPaisaTitle = easyPaisaTitle !== undefined ? easyPaisaTitle : settings.easyPaisaTitle;
     settings.jazzCash = jazzCash !== undefined ? jazzCash : settings.jazzCash;
+    settings.jazzCashTitle = jazzCashTitle !== undefined ? jazzCashTitle : settings.jazzCashTitle;
     settings.shippingFee = shippingFee !== undefined ? shippingFee : settings.shippingFee;
     settings.enableCOD = enableCOD !== undefined ? enableCOD : settings.enableCOD;
 
