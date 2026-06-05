@@ -43,6 +43,7 @@ const corsOptions = {
     origin: [
         'https://theamazes.com',
         'https://www.theamazes.com',
+        'https://theamaze.theamazes.com',
         'http://theamazes.com',
         'http://www.theamazes.com',
         'http://localhost:5500',
