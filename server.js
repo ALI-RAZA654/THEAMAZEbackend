@@ -38,8 +38,23 @@ app.use(helmet({
 // Compression
 app.use(compression());
 
-// Enable CORS
-app.use(cors());
+// Enable CORS - Allow frontend domains
+const corsOptions = {
+    origin: [
+        'https://theamazes.com',
+        'https://www.theamazes.com',
+        'http://theamazes.com',
+        'http://www.theamazes.com',
+        'http://localhost:5500',
+        'http://127.0.0.1:5500',
+        'http://localhost:3000',
+        'http://localhost:5173'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 
 // Rate Limiting
 const limiter = rateLimit({
