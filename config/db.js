@@ -3,21 +3,29 @@ const mongoose = require('mongoose');
 /**
  * Robust MongoDB Connection Handler
  * Removed deprecated options and focused on bypassing network blocks.
+ * Compatible with Vercel serverless (no process.exit).
  */
+
+// Cache connection for serverless warm starts
+let cachedConnection = null;
+
 const connectDB = async () => {
-    // DEBUG: Print all available env variable KEYS (not values for security)
-    console.log('🔍 DEBUG - Available ENV Keys:', Object.keys(process.env).join(', '));
+    // If already connected, reuse the connection
+    if (cachedConnection && mongoose.connection.readyState === 1) {
+        console.log('♻️ Reusing existing database connection');
+        return cachedConnection;
+    }
+
     console.log('🔍 DEBUG - MONGODB_URI exists:', !!process.env.MONGODB_URI);
-    console.log('🔍 DEBUG - MONGODB_URI length:', process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0);
 
     const uri = process.env.MONGODB_URI;
 
     if (!uri) {
         console.error('--------------------------------------------------');
-        console.error('❌ CRITICAL ERROR: MONGODB_URI is missing in your .env file.');
-        console.error('Available ENV Keys:', Object.keys(process.env).join(', '));
+        console.error('❌ CRITICAL ERROR: MONGODB_URI is missing.');
+        console.error('Make sure MONGODB_URI is set in Vercel Environment Variables.');
         console.error('--------------------------------------------------');
-        process.exit(1);
+        throw new Error('MONGODB_URI is not defined');
     }
 
     try {
@@ -26,7 +34,7 @@ const connectDB = async () => {
 
         // Removed useNewUrlParser and useUnifiedTopology to stop warnings
         // Driver version 4.0+ handles these automatically.
-        await mongoose.connect(uri, {
+        cachedConnection = await mongoose.connect(uri, {
             serverSelectionTimeoutMS: 30000, // Increased to 30s for slow connections
             socketTimeoutMS: 45000,
             family: 4 // Forces IPv4 to bypass certain ISP DNS/routing glitches
@@ -35,22 +43,18 @@ const connectDB = async () => {
         console.log('✅ SUCCESS: THE AMAZE Database Connected!');
         console.log('--------------------------------------------------');
 
+        return cachedConnection;
+
     } catch (error) {
         console.error('--------------------------------------------------');
         console.error('❌ DATABASE CONNECTION FAILED');
         console.error(`Message: ${error.message}`);
-        console.error('🔍 DIAGNOSIS: Network Blockage detected.');
-        console.error('ACTION: 1. Turn on a VPN. 2. Verify 0.0.0.0/0 in Atlas.');
+        console.error('🔍 DIAGNOSIS: Check MongoDB Atlas Network Access.');
+        console.error('ACTION: 1. Verify 0.0.0.0/0 in Atlas. 2. Check MONGODB_URI in Vercel env.');
         console.error('--------------------------------------------------');
 
-        process.exit(1);
+        throw error;
     }
 };
-
-// Handle global rejections
-process.on('unhandledRejection', (err) => {
-    console.error(`Unhandled Rejection: ${err.message}`);
-    process.exit(1);
-});
 
 module.exports = connectDB;
