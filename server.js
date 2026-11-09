@@ -38,31 +38,34 @@ app.use(helmet({
 // Compression
 app.use(compression());
 
-// Enable CORS - Allow frontend domains
-const corsOptions = {
-    origin: [
-        'https://theamazes.com',
-        'https://www.theamazes.com',
-        'https://theamaze.theamazes.com',
-        'http://theamazes.com',
-        'http://www.theamazes.com',
-        'http://localhost:5500',
-        'http://127.0.0.1:5500',
-        'http://localhost:3000',
-        'http://localhost:5173'
-    ],
+// Enable CORS - Universal for public e-commerce store
+app.use(cors({
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
-};
-app.use(cors(corsOptions));
+}));
 
-// Rate Limiting
+// Safe Rate Limiting (High limit so mobile/ad traffic is never blocked)
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 200 // Increased limit to be safe
+    windowMs: 15 * 60 * 1000,
+    max: 5000,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => req.method === 'GET' || req.originalUrl.includes('/orders')
 });
 app.use('/api/', limiter);
+
+// Ensure DB is connected before processing requests (critical for serverless)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error('Database connection middleware warning:', err.message);
+        next();
+    }
+});
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {

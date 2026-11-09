@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const sendEmail = require('../config/mailer');
@@ -15,8 +16,13 @@ const addOrderItems = asyncHandler(async (req, res) => {
         totalAmount,
     } = req.body;
 
-    if (customerInfo && !customerInfo.name && customerInfo.firstName) {
-        customerInfo.name = `${customerInfo.firstName} ${customerInfo.lastName || ''}`.trim();
+    if (customerInfo) {
+        if (!customerInfo.name && (customerInfo.firstName || customerInfo.lastName)) {
+            customerInfo.name = `${customerInfo.firstName || ''} ${customerInfo.lastName || ''}`.trim();
+        }
+        if (!customerInfo.name) {
+            customerInfo.name = 'Valued Customer';
+        }
     }
 
     if (orderItems && orderItems.length === 0) {
@@ -73,12 +79,20 @@ const addOrderItems = asyncHandler(async (req, res) => {
                 `\nTime: ${new Date().toLocaleString()}`
         }).catch(err => console.error('Admin order notification email failed:', err));
 
-        // Stock reduction
-        for (const item of orderItems) {
-            const product = await Product.findById(item.product);
-            if (product) {
-                product.stock -= item.qty;
-                await product.save();
+        // Safe stock reduction
+        if (Array.isArray(orderItems)) {
+            for (const item of orderItems) {
+                if (item && item.product && mongoose.Types.ObjectId.isValid(item.product)) {
+                    try {
+                        const product = await Product.findById(item.product);
+                        if (product) {
+                            product.stock = Math.max(0, (product.stock || 0) - (Number(item.qty) || 1));
+                            await product.save();
+                        }
+                    } catch (stockErr) {
+                        console.warn('Stock update skipped for item:', item.name, stockErr.message);
+                    }
+                }
             }
         }
 
