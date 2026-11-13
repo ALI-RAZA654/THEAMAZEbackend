@@ -35,8 +35,8 @@ const connectDB = async () => {
         // Removed useNewUrlParser and useUnifiedTopology to stop warnings
         // Driver version 4.0+ handles these automatically.
         cachedConnection = await mongoose.connect(uri, {
-            serverSelectionTimeoutMS: 30000, // Increased to 30s for slow connections
-            socketTimeoutMS: 45000,
+            serverSelectionTimeoutMS: 9000, // Kept within Vercel's 10s serverless limit
+            socketTimeoutMS: 30000,
             family: 4 // Forces IPv4 to bypass certain ISP DNS/routing glitches
         });
 
